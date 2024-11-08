@@ -10,4 +10,7 @@ services:
     env_file:
       - ../.env
     volumes:
-      - ../app:/app
+      - data_for_sqlite:/var/lib/sqlite/data
+
+volumes:
+  data_for_sqlite:
