@@ -38,11 +38,35 @@ source venv/bin/activate
 
 ## 4. Configure Environment Variables
 
-Create a `.env` file based on the provided `.env.template`:
-
-1. Copy `.env.template` to `.env`. You can left DJANGO_SECRET_KEY and GOOGLE_SCOPE(highly recommend)
+1. Copy the `.env.template` file to `.env`. You can leave or change the `DJANGO_SECRET_KEY`. `GOOGLE_SCOPE` need to be the same.
    
-2. ...
+2. Go to the [Google Cloud Console](https://cloud.google.com/), log in with your Google account, and click **Console**.
+
+3. In the top navigation bar, click **Select/Create Project** and create a new project.
+
+4. Give your project a name.
+
+5. In the left sidebar, click **APIs & Services** -> **OAuth consent screen**.
+
+6. Select **External** and click **Create**.
+
+7. Provide the app name, support email, and add your email to the **Developer contact information** section.
+
+8. Click **Add or Remove Scopes**, then select `userinfo.email` and `userinfo.profile`. Save and continue.
+
+9.  Add a test user email and click **Save and Continue**. Review everything and click **Back to Dashboard**.
+
+10. Go to **Credentials** -> **Create Credentials** -> **OAuth Client ID**.
+
+11. Choose **Web application**, then add the following:
+    - **Authorized JavaScript origins**: `http://localhost:8000`
+    - **Authorized redirect URIs**: `http://localhost:8000/auth/google/callback/`
+
+12. Copy the **Client ID** and paste it into the `GOOGLE_CLIENT_ID` field in your `.env` file. Similarly, copy the **Client Secret** and paste it into the `GOOGLE_CLIENT_SECRET` field in your `.env` file.
+
+For a quick walkthrough, you can watch the first 2 minutes of this [video](https://www.youtube.com/watch?v=HtJKUQXmtok&ab_channel=CooperCodes). Remember to follow step 11 for the correct redirect URI configuration.
+
+
 
 ## 5. Running the Application
 
@@ -85,16 +109,16 @@ If you prefer to run the project with Docker, follow these steps:
    poetry install
    ```
 
-2. Run migrations with `scons`:
-
-   ```bash
-   scons migrate
-   ```
-
-3. Start the Docker containers and check logs:
+2. Start the Docker containers and check logs:
 
    ```bash
    scons up && scons logs
+   ```
+
+3. Run migrations with `scons`:
+
+   ```bash
+   scons migrate
    ```
 
 4. Run tests using `scons` if you need:
