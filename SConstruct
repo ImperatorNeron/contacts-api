@@ -38,6 +38,11 @@ def migrate(target, source, env):
     return os.system(command)
 
 
+def tests(target, source, env):
+    command = f"{EXEC} {APP_CONTAINER} pytest"
+    return os.system(command)
+
+
 # app
 Command("up", [], app)
 Command("down", [], app_down)
@@ -46,3 +51,6 @@ Command("logs", [], app_logs)
 # db
 Command("makemigrations", [], makemigrations)
 Command("migrate", [], migrate)
+
+# tests
+Command("tests", [], tests)
