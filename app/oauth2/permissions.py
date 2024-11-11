@@ -9,3 +9,10 @@ class IsAuthenticatedPermission(BasePermission):
         if not request.session.get("user_id"):
             raise PermissionDenied("You must be logged in to access the API.")
         return True
+
+
+class IsAuthenticatedFakePermission(BasePermission):
+    """Allows access only to logged-in users."""
+
+    def has_permission(self, request, view):
+        return True

@@ -17,7 +17,6 @@ class CountryRestrictionMiddleware:
 
     def __call__(self, request):
         user_ip = self.get_client_ip(request=request)
-
         # Check the availability of IP and access permission
         if not user_ip:
             return JsonResponse(
@@ -41,7 +40,6 @@ class CountryRestrictionMiddleware:
                 {"error": "This API is not allowed for your region."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-
         return self.get_response(request)
 
     def get_client_ip(self, request):
