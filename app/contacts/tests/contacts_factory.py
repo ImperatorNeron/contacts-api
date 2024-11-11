@@ -2,12 +2,13 @@ import random
 
 import factory
 from contacts.models import Contact
+from factory.django import DjangoModelFactory
 from faker import Faker
 
 fake = Faker()
 
 
-class ContactModelFactory(factory.Factory):
+class ContactModelFactory(DjangoModelFactory):
     """Factory for creating fake data for Contact."""
 
     first_name = factory.Faker("first_name")

@@ -38,3 +38,29 @@ def test_create_duplicate(client: APIClient):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "email" in response.data
     assert "phone_number" in response.data
+
+
+@pytest.mark.django_db
+def test_filters(client: APIClient):
+    """Tests the filtering of contacts by first_name and/or last_name."""
+    url = "http://localhost:8000/api/contacts/"
+
+    ContactModelFactory.create(first_name="John", last_name="Doe")
+    ContactModelFactory.create(first_name="Jane", last_name="Doe")
+    ContactModelFactory.create(first_name="John", last_name="Smith")
+
+    response = client.get(url, {"first_name": "John"})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 2
+
+    response = client.get(url, {"last_name": "Doe"})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 2
+
+    response = client.get(url, {"first_name": "John", "last_name": "Doe"})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 3
+
+    response = client.get(url, {"first_name": "Alice"})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 0
