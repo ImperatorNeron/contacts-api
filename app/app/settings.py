@@ -11,10 +11,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "0.0.0.0",
-    "127.0.0.1",
-]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
 
 
 INSTALLED_APPS = [
@@ -28,6 +25,7 @@ INSTALLED_APPS = [
     "contacts.apps.ContactsConfig",
     # thirdparty
     "rest_framework",
+    "oauth2.apps.Oauth2Config",
 ]
 
 MIDDLEWARE = [
@@ -38,6 +36,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "middlewares.region_restriction.CountryRestrictionMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -83,7 +82,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "uk"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Europe/Kyiv"
 

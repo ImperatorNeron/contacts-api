@@ -1,68 +1,37 @@
-from django.db.models import Q
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from oauth2.permissions import IsAuthenticatedPermission
+from rest_framework import generics, mixins
 
+from .filters import search_contacts
 from .models import Contact
-from .permissions import RegionRestrictionPermission
 from .serializers import ContactSerializer
 
 
-class ListCreateContactAPIView(APIView):
+class ListCreateContactAPIView(
+    generics.ListCreateAPIView,
+):
+    """API view to list and create contacts."""
 
-    permission_classes = [RegionRestrictionPermission]
+    permission_classes = [IsAuthenticatedPermission]
+    serializer_class = ContactSerializer
 
-    def get(self, request):
+    def get_queryset(self):
+        """Returns the list of contacts, filtered by the first and/or last
+        name."""
 
-        first_name = request.GET.get("first_name", None)
-        last_name = request.GET.get("last_name", None)
-
-        query = Q()
-        if first_name:
-            query |= Q(first_name__icontains=first_name)
-
-        if last_name:
-            query |= Q(last_name__icontains=last_name)
-
-        contacts = Contact.objects.filter(query) if query else Contact.objects.all()
-        serializer = ContactSerializer(contacts, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ContactSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        first_name = self.request.GET.get("first_name", None)
+        last_name = self.request.GET.get("last_name", None)
+        return search_contacts(first_name, last_name)
 
 
-class DetailUpdateDeleteContactAPIView(APIView):
-    def get(self, request, pk):
-        try:
-            contact = Contact.objects.get(pk=pk)
-        except Contact.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+class DetailUpdateDeleteContactAPIView(
+    mixins.UpdateModelMixin,
+    generics.RetrieveDestroyAPIView,
+):
+    """API view to retrieve, update, and delete a specific contact by ID."""
 
-        serializer = ContactSerializer(contact)
-        return Response(serializer.data)
+    permission_classes = [IsAuthenticatedPermission]
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
 
-    def put(self, request, pk):
-        try:
-            contact = Contact.objects.get(pk=pk)
-        except Contact.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = ContactSerializer(contact, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        try:
-            contact = Contact.objects.get(pk=pk)
-        except Contact.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        contact.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)

@@ -4,12 +4,12 @@ from .validators import validate_phone_number
 
 
 class Contact(models.Model):
-    first_name = models.CharField(max_length=50, verbose_name="Ім'я")
-    last_name = models.CharField(max_length=50, verbose_name="Прізвище")
+    first_name = models.CharField(max_length=50, verbose_name="First name")
+    last_name = models.CharField(max_length=50, verbose_name="Last name")
     phone_number = models.CharField(
         max_length=15,
         unique=True,
-        verbose_name="Номер телефону",
+        verbose_name="Phone number",
         validators=[validate_phone_number],
     )
     email = models.EmailField(unique=True, verbose_name="Email")
@@ -18,5 +18,5 @@ class Contact(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        verbose_name = "Контакт"
-        verbose_name_plural = "Контакти"
+        verbose_name = "Contact"
+        verbose_name_plural = "Contacts"

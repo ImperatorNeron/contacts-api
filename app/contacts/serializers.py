@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework.serializers import ModelSerializer
 
 from .models import Contact
 from .validators import validate_phone_number
@@ -17,15 +17,5 @@ class ContactSerializer(ModelSerializer):
         ]
 
     def validate_phone_number(self, value):
-
         validate_phone_number(value)
-
-        if Contact.objects.filter(phone_number=value).exists():
-            raise ValidationError("Цей номер телефону вже зареєстровано.")
-
-        return value
-
-    def validate_email(self, value):
-        if Contact.objects.filter(email=value).exists():
-            raise ValidationError("Ця електронна пошта вже використовується.")
         return value
